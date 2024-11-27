@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: url('static/image.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #333;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: flex-start;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.85);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            max-width: 700px;
+            width: 100%;
+            text-align: left;
+            margin: 50px 0;
+        }
+
+        h1 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-size: 26px;
+            font-weight: bold;
+            text-align: left;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #ffffff;
+        }
+
+        input[type="text"], input[type="file"], select {
+            width: calc(100% - 24px);
+            height: 40px;
+            padding: 10px;
+            margin: 10px 0;
+            font-size: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            margin: 10px 10px;
+        }
+
+        .capture-button {
+            width: 120px;
+            height: 40px;
+        }
+
+        .predict-button {
+            width: 100px;
+            height: 36px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .popup {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .popup-content {
+            background:black;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        #video {
+            width: 100%;
+            max-width: 320px;
+            height: auto;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>User Information And Choose Disease To Predict</h1>
+
+    <form method="POST" action="/" enctype="multipart/form-data" id="uploadForm">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" placeholder="Enter your name" required>
+
+        <label for="age">Age:</label>
+        <input type="text" id="age" name="age" placeholder="Enter your age" required>
+
+        <label for="model_type">Select Model Type:</label>
+        <select name="model_type" id="model_type" required>
+            <option value="lung_disease">Corona / Tuberculosis / Pneumonia Detection</option>
+            <option value="lung_cancer">Lung Cancer Detection</option>
+        </select>
+
+        <label for="file">Upload X-ray Image:</label>
+        <input type="file" name="file" accept="image/*" id="fileInput" required>
+
+        <div class="button-container">
+            <button type="button" class="capture-button" onclick="captureFromCamera()">Capture from Camera</button>
+            <button type="submit" class="predict-button">Predict</button>
+        </div>
+    </form>
+</div>
+
+<!-- Popup for camera capture -->
+<div class="popup" id="cameraPopup">
+    <div class="popup-content">
+        <p>Click on the video feed to capture the image</p>
+        <video id="video" autoplay></video>
+        <canvas id="canvas" style="display: none;"></canvas>
+        <p id="error" style="color: red;"></p>
+        <button onclick="closePopup()">Close</button>
+    </div>
+</div>
+
+<!-- JavaScript for handling popups, camera input, and volume key capture -->
+<script>
+    function captureFromCamera() {
+        document.getElementById('cameraPopup').style.display = 'flex';
+        navigator.mediaDevices.getUserMedia({ video: true })
+            .then(function(stream) {
+                document.getElementById('video').srcObject = stream;
+            })
+            .catch(function(err) {
+                console.error("Error accessing camera: ", err);
+            });
+    }
+
+    // Capture image when clicking on video feed
+    document.getElementById('video').addEventListener('click', takePicture);
+
+    // Add an event listener for the volume buttons
+    window.addEventListener('keydown', function(event) {
+        if (event.code === 'VolumeUp' || event.code === 'VolumeDown') {
+            takePicture();
+        }
+    });
+
+    function takePicture() {
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const errorText = document.getElementById('error');
+        const context = canvas.getContext('2d');
+
+        // Set canvas dimensions to match video
+        canvas.width = 640; // Adjust width as needed
+        canvas.height = 480; // Adjust height as needed
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        // Check aspect ratio (4:3 for X-ray)
+        if (canvas.width / canvas.height !== 640 / 480) {
+            errorText.textContent = "Error: The image aspect ratio is incorrect. Please capture a proper X-ray image.";
+            return;
+        } else {
+            errorText.textContent = ""; // Clear error message
+        }
+
+        // Convert canvas to a blob
+        canvas.toBlob(function(blob) {
+            const fileInput = document.getElementById('fileInput');
+            const file = new File([blob], "captured_image.png", { type: "image/png" });
+
+            // Simulate file input with captured image
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            fileInput.files = dataTransfer.files;
+
+            closePopup(); // Close the camera popup
+        }, 'image/png');
+    }
+
+    function closePopup() {
+        document.getElementById('cameraPopup').style.display = 'none';
+        let video = document.getElementById('video');
+        let stream = video.srcObject;
+        if (stream) {
+            let tracks = stream.getTracks();
+            tracks.forEach(track => track.stop());
+        }
+        video.srcObject = null;
+    }
+</script>
+
+</body>
+</html>

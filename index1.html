@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lung Disease Detection</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #eef3f7;
+            color: #343a40;
+            font-family: 'Arial', sans-serif;
+        }
+
+        .container {
+            margin-top: 50px;
+            background-color: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+
+        h1 {
+            color: #007bff;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 30px;
+        }
+
+        .result {
+            margin-top: 20px;
+            padding: 20px;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            background-color: #f0f8ff;
+        }
+
+        .upload-btn {
+            margin-top: 20px;
+        }
+
+        .footer {
+            margin-top: 30px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+
+        .footer a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .hospital-image {
+            width: 100%;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .about {
+            background-color: #e9ecef;
+            padding: 15px;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .about h4 {
+            color: #007bff;
+            margin-bottom: 10px;
+        }
+
+        .prediction-title {
+            color: #28a745;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Lung Disease Detection System</h1>
+        
+        <img src="https://www.example.com/hospital-image.jpg" alt="Hospital Image" class="hospital-image"> <!-- Replace with a valid image URL -->
+        
+        <div class="about">
+            <h4>About the System</h4>
+            <p>This system utilizes advanced machine learning techniques to detect lung diseases from X-Ray images. It is designed to assist medical professionals in diagnosing conditions such as Pneumonia, Tuberculosis, and COVID-19.</p>
+        </div>
+        
+        <form action="/" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="file">Upload an X-Ray Image:</label>
+                <input type="file" class="form-control-file" id="file" name="file" accept="image/*" required>
+            </div>
+            <button type="submit" class="btn btn-primary upload-btn">Predict</button>
+        </form>
+
+        {% if prediction %}
+            <div class="result">
+                <h4 class="prediction-title">Prediction Result:</h4>
+                <p>The uploaded image is classified as: <strong>{{ prediction }}</strong></p>
+                <img src="{{ image_path }}" alt="Uploaded Image" class="img-fluid">
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="footer">
+        <p>© 2024 Lung Disease Detection System. <a href="#">Privacy Policy</a> | <a href="#">Terms of Service</a></p>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

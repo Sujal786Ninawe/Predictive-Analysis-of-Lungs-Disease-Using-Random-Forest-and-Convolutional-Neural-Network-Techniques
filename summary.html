@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disease Summary Report</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background: url('static/image.png') no-repeat center center fixed;
+            background-size: cover;
+            color: #fff;
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: left;
+            align-items: left;
+            padding: 20px;
+        }
+
+        .container {
+            background-color: rgba(0, 0, 0, 0.85);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            max-width: 700px;
+            width: 100%;
+            margin: 50px 0;
+            text-align: left;
+        }
+
+        h1 {
+            color: #ffffff;
+            margin-bottom: 20px;
+            font-size: 38px;
+            font-weight: bold;
+        }
+
+        p {
+            color: #ffffff;
+            font-size: 22px;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            color: #ffffff;
+            font-size: 20px;
+            text-align: left;
+            list-style-type: none;
+            padding: 0;
+        }
+
+        li {
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+
+        button:hover {
+            background-color: #2980b9;
+        }
+
+        .button-container {
+            display: flex;
+            margin-top: 20px;
+        }
+
+        form {
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Disease Summary Report</h1>
+
+    <p>
+        {% if prediction == 'Normal' or prediction == 'Negative' %}
+            No disease detected. Please maintain a healthy lifestyle and routine check-ups.
+        {% elif prediction == 'Positive' %}
+            Lung cancer detected. Please consult a doctor immediately for further medical advice.
+        {% else %}
+            Predicted Disease: {{ prediction }}. Please consult with a specialist for further details.
+        {% endif %}
+    </p>
+
+    <div class="button-container">
+        <form action="/" method="get">
+            <button type="submit">Go Back</button>
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
